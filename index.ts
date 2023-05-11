@@ -1,6 +1,12 @@
 import puppeteer from 'puppeteer'
 (async () => {
 
+  try {
+    if (process.argv[2] === undefined) { throw new Error("argument needed") }
+  } catch (e) {
+    console.log('argument needed')
+    process.exit(1)
+  }
   async function move_page(idx: number) {
     // #rgrstyReportResult > div > ul > li:nth-child(2) > a
     const pagination = await page.waitForSelector(`#rgrstyReportResult > div > ul > li:nth-child(${idx}) > a`)
@@ -26,7 +32,7 @@ import puppeteer from 'puppeteer'
   await page.$eval('#submenu1 > ul > li:nth-child(4) > ul > li:nth-child(1) > a', elem => elem.click())
   await page.waitForTimeout(1000)
   await page.focus('#searchODStartSpaceNm')
-  const searchStr = '안산시'
+  const searchStr = process.argv[2]
   console.log("searching ... ", searchStr)
   await page.keyboard.type(searchStr)
   const search_btn = await page.waitForSelector('#space6 > li.box_flex > button') // 검색 클릭
