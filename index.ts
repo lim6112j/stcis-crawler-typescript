@@ -64,18 +64,16 @@ import puppeteer from 'puppeteer'
   console.log("pagenation number = ", pageNum)
   // table to json
   // #rgrstyReportResult > div > ul > li:nth-child(2) > a
-  const data: any = [];
+  let data: any = [];
   for (let index = 0; index < pageNum; index++) {
     if (index === 0) {
       const _data = await get_table_value()
-      console.log(_data)
-      data.concat(_data)
+      data = data.concat(_data)
     } else {
       await move_page(index + 1)
       await wait_for_pagination()
       const _data = await get_table_value()
-      console.log(_data)
-      data.concat(_data)
+      data = data.concat(_data)
     }
   }
 
