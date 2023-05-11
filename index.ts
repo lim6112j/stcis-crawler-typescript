@@ -1,5 +1,23 @@
 import puppeteer from 'puppeteer'
 (async () => {
+
+  async function move_page(idx: number) {
+    // #rgrstyReportResult > div > ul > li:nth-child(2) > a
+    const pagination = await page.waitForSelector(`#rgrstyReportResult > div > ul > li:nth-child(${idx}) > a`)
+    await pagination?.click()
+  }
+  async function get_table_value() {
+    const page_data = await page.evaluate(() => Array.from(
+      document.querySelectorAll('#rgrstyReportResult > table > tbody > tr'),
+      (row: any) => Array.from(row.querySelectorAll('th, td'), (cell: HTMLElement) => cell.innerText)
+    ))
+    return page_data
+  }
+  async function wait_for_pagination() {
+
+    await page.waitForSelector('#tab1 > div.pivotResult > div.but_area_back > button')
+    await page.waitForSelector('#rgrstyReportResult > table')
+  }
   const browser = await puppeteer.launch({ headless: true })
   const page = await browser.newPage()
   await page.goto('http://stcis.go.kr')
@@ -29,8 +47,7 @@ import puppeteer from 'puppeteer'
   // 결과 검색
   const result_btn = await page.waitForSelector('#btnSearch > button') // 검색 클릭
   await result_btn?.click()
-  await page.waitForSelector('#tab1 > div.pivotResult > div.but_area_back > button')
-  await page.waitForSelector('#rgrstyReportResult > table')
+  await wait_for_pagination()
   // table paging
   //
   const pageNum = await page.evaluate(
@@ -40,10 +57,21 @@ import puppeteer from 'puppeteer'
   )
   console.log("pagenation number = ", pageNum)
   // table to json
-  const data = await page.evaluate(() => Array.from(
-    document.querySelectorAll('#rgrstyReportResult > table > tbody > tr'),
-    (row: any) => Array.from(row.querySelectorAll('th, td'), (cell: HTMLElement) => cell.innerText)
-  ))
+  // #rgrstyReportResult > div > ul > li:nth-child(2) > a
+  const data: any = [];
+  for (let index = 0; index < pageNum; index++) {
+    if (index === 0) {
+      const _data = await get_table_value()
+      console.log(_data)
+      data.concat(_data)
+    } else {
+      await move_page(index + 1)
+      await wait_for_pagination()
+      const _data = await get_table_value()
+      console.log(_data)
+      data.concat(_data)
+    }
+  }
 
   console.log(data)
   // screenshot
