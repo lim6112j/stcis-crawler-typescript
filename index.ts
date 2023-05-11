@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer'
 (async () => {
-  const browser = await puppeteer.launch({ headless: false })
+  const browser = await puppeteer.launch({ headless: true })
   const page = await browser.newPage()
   await page.goto('http://stcis.go.kr')
   await page.focus('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a')
@@ -31,10 +31,23 @@ import puppeteer from 'puppeteer'
   await result_btn?.click()
   await page.waitForSelector('#tab1 > div.pivotResult > div.but_area_back > button')
   await page.waitForSelector('#rgrstyReportResult > table')
+  // table paging
+  //
+  const pageNum = await page.evaluate(
+    () => {
+      return document.querySelectorAll('.tbl_paging > ul > li').length
+    }
+  )
+  console.log("pagenation number = ", pageNum)
+  // table to json
+  const data = await page.evaluate(() => Array.from(
+    document.querySelectorAll('#rgrstyReportResult > table > tbody > tr'),
+    (row: any) => Array.from(row.querySelectorAll('th, td'), (cell: HTMLElement) => cell.innerText)
+  ))
 
-
+  console.log(data)
   // screenshot
-  await page.waitForTimeout(1000)
+  // await page.waitForTimeout(1000)
   await page.screenshot({ path: "./stcis.png", fullPage: true })
   console.log("browser closing ...")
   await browser.close()
