@@ -24,13 +24,14 @@ import puppeteer from 'puppeteer'
     await page.waitForSelector('#tab1 > div.pivotResult > div.but_area_back > button')
     await page.waitForSelector('#rgrstyReportResult > table')
   }
-  const browser = await puppeteer.launch({ headless: true })
+  const browser = await puppeteer.launch({ headless: false })
   const page = await browser.newPage()
   await page.goto('http://stcis.go.kr')
   await page.focus('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a')
   await page.waitForSelector('#submenu1 > ul > li:nth-child(4) > ul > li:nth-child(1) > a')
   await page.$eval('#submenu1 > ul > li:nth-child(4) > ul > li:nth-child(1) > a', elem => elem.click())
-  await page.waitForTimeout(1000)
+  await page.waitForSelector('#searchODStartSpaceNm')
+  await page.waitForSelector('#space6 > li.box_flex > button')
   await page.focus('#searchODStartSpaceNm')
   const searchStr = process.argv[2]
   console.log("searching ... ", searchStr)
