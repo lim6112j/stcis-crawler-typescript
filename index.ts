@@ -24,18 +24,18 @@ import puppeteer from 'puppeteer'
     await page.waitForSelector('#tab1 > div.pivotResult > div.but_area_back > button')
     await page.waitForSelector('#rgrstyReportResult > table')
   }
-  const browser = await puppeteer.launch({ headless: false })
+  const browser = await puppeteer.launch({ headless: false, userDataDir: './data/' })
   const page = await browser.newPage()
   await page.goto('http://stcis.go.kr')
+  await page.waitForSelector('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a')
   await page.focus('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a')
   await page.waitForSelector('#submenu1 > ul > li:nth-child(4) > ul > li:nth-child(1) > a')
   await page.$eval('#submenu1 > ul > li:nth-child(4) > ul > li:nth-child(1) > a', elem => elem.click())
   await page.waitForSelector('#searchODStartSpaceNm')
-  await page.waitForSelector('#space6 > li.box_flex > button')
   await page.focus('#searchODStartSpaceNm')
   const searchStr = process.argv[2]
   console.log("searching ... ", searchStr)
-  await page.keyboard.type(searchStr)
+  await page.keyboard.type(searchStr, { delay: 100 })
   const search_btn = await page.waitForSelector('#space6 > li.box_flex > button') // 검색 클릭
   await search_btn?.click()
   console.log("start location searching button clicked...")
@@ -79,9 +79,11 @@ import puppeteer from 'puppeteer'
   }
 
   console.log(data)
+  const domBtn = await page.waitForSelector('#rgrstyReportResult > h2 > p > span:nth-child(1)', { timeout: 1000 })
+  await domBtn?.click()
   // screenshot
-  // await page.waitForTimeout(1000)
-  await page.screenshot({ path: "./stcis.png", fullPage: true })
+  await page.waitForTimeout(1000000)
+  // await page.screenshot({ path: "./stcis.png", fullPage: true })
   console.log("browser closing ...")
   await browser.close()
 }
