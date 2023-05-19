@@ -12,12 +12,15 @@ export default async function(page: Page, searchStr: string) {
   const startInputBox = await page.waitForSelector('#rdStgptSelY', { timeout: TIMEOUT })
   startInputBox?.click()
 
+  await page.waitForTimeout(1000)
   await page.waitForSelector('#searchODStartSpaceNm', { timeout: TIMEOUT })
   await page.focus('#searchODStartSpaceNm')
   console.log("searching ... ", searchStr)
   // 출발지  input box click
   await page.waitForTimeout(100)
   await page.keyboard.type(searchStr, { delay: 300 })
+
+  await page.waitForTimeout(1000)
   const search_btn = await page.waitForSelector('#space6 > li.box_flex > button', { timeout: TIMEOUT }) // 검색 클릭
   await search_btn?.click()
   console.log("start location searching button clicked...")

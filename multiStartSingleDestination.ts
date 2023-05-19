@@ -23,7 +23,7 @@ export default async function(page: Page, searchStr: string) {
   await page.keyboard.type(searchStr, { delay: 300 })
 
   // 검색
-  await page.waitForTimeout(100)
+  await page.waitForTimeout(1000)
   const search_btn2 = await page.waitForSelector('#space7 > li.box_flex > button', { timeout: TIMEOUT }) // 검색 클릭
   await search_btn2?.click()
   console.log("start location searching button clicked...")
