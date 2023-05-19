@@ -15,6 +15,8 @@ export default async function(page: Page, searchStr: string) {
   await page.waitForSelector('#searchODStartSpaceNm', { timeout: TIMEOUT })
   await page.focus('#searchODStartSpaceNm')
   console.log("searching ... ", searchStr)
+  // 출발지  input box click
+  await page.waitForTimeout(100)
   await page.keyboard.type(searchStr, { delay: 300 })
   const search_btn = await page.waitForSelector('#space6 > li.box_flex > button', { timeout: TIMEOUT }) // 검색 클릭
   await search_btn?.click()
@@ -39,6 +41,6 @@ export default async function(page: Page, searchStr: string) {
   const backBtn = await page.waitForSelector('#tab1 > div.pivotResult > div.but_area_back > button', { timeout: TIMEOUT })
   backBtn?.click()
   hiddenlayer?.getProperty('style').then(val => console.log(val))
-  await page.waitForTimeout(50000)
+  await page.waitForTimeout(5000)
   // await page.screenshot({ path: "./stcis.png", fullPage: true })
 } 

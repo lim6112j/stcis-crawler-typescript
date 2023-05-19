@@ -1,6 +1,18 @@
+import { Page } from 'puppeteer'
 import { Cluster } from 'puppeteer-cluster'
-import ssmd from './singleStartMultiDestination'
 import mssd from './multiStartSingleDestination'
+import ssmd from './singleStartMultiDestination'
+async function download(page: Page, searchStr: string, type: number) {
+  switch (type) {
+    case 0:
+      await ssmd(page, searchStr)
+      break;
+
+    default:
+      await mssd(page, searchStr)
+      break;
+  }
+}
 (async () => {
 
   // try {
@@ -16,12 +28,14 @@ import mssd from './multiStartSingleDestination'
       headless: false
     }
   });
-  await cluster.task(async ({ page, data: searchStr }) => {
-    await ssmd(page, searchStr)
+  await cluster.task(async ({ page, data }) => {
+    await download(page, data.searchStr, data.type)
   })
-  cluster.queue('아산시')
-  cluster.queue('경주시')
-  cluster.queue('안산시')
+  const listOfSearch = ['아산시', '경주시', '안산시']
+  listOfSearch.forEach(val => {
+    cluster.queue({ searchStr: val, type: 0 })
+    cluster.queue({ searchStr: val, type: 1 })
+  })
   await cluster.idle()
   await cluster.close()
 }
