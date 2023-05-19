@@ -1,7 +1,7 @@
 import { Page } from 'puppeteer'
 import puppeteer from 'puppeteer'
 const TIMEOUT = 15000
-export default async function(page: Page, searchStr: string) {
+export default async function(page: Page, searchStr: string, dongName: string) {
   await page.goto('http://stcis.go.kr')
   await page.waitForSelector('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a', { timeout: TIMEOUT })
   await page.focus('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a')
