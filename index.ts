@@ -23,7 +23,7 @@ async function download(page: Page, searchStr: string, dongName: string, type: n
     process.exit(1)
   }
   const searchStr = process.argv[2]
-  const dongs = await getDong('아산시')
+  const dongs = await getDong(searchStr)
   const listOfSearch = dongs.splice(1)
   console.log(listOfSearch)
   // const cluster = await Cluster.launch({

@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer'
 const TIMEOUT = 15000
 export default async function getDong(searchStr: string) {
 
-  const browser = await puppeteer.launch({ headless: true })
+  const browser = await puppeteer.launch({ headless: false })
   const page = await browser.newPage()
   await page.goto('http://stcis.go.kr')
   await page.waitForSelector('body > header > div.header_inner > div.gnb > ul > li:nth-child(1) > a', { timeout: TIMEOUT })
@@ -35,6 +35,18 @@ export default async function getDong(searchStr: string) {
   await page.waitForSelector('#divRdoODAear > li.searchODAreaGubun.active')
 
   const dongList = await page.evaluate(() => Array.from(document.querySelectorAll('#searchStgptZoneEmd option')).map((element: any) => element.innerText))
+  // test code
+
+  await page.waitForSelector('#searchODStartSpaceNm', { timeout: TIMEOUT })
+  await page.focus('#searchODStartSpaceNm')
+  console.log("searching ... ", searchStr)
+  // 출발지  input box click
+  await page.waitForTimeout(100)
+  await page.keyboard.type('남동', { delay: 300 })
+  await page.click('#space6 > li.box_flex > button')
+
+  // test code end
+  await page.waitForTimeout(1000000)
   await browser.close()
   return dongList
 }
